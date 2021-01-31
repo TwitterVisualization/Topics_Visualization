@@ -1,0 +1,62 @@
+{
+  "prefetchRate": 5,
+  "maxThreads": null,
+  "disableRoutePrefixing": false,
+  "outputFileRate": 100,
+  "extensions": [
+    ".js",
+    ".jsx"
+  ],
+  "minLoadTime": 200,
+  "disablePreload": false,
+  "disableRuntime": false,
+  "preloadPollInterval": 300,
+  "productionSourceMaps": false,
+  "silent": false,
+  "entry": "index.js",
+  "plugins": [
+    [
+      "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-source-filesystem/node.api.js",
+      {
+        "location": "/home/luke/Downloads/topic_viz/topic-vis/src/pages"
+      }
+    ],
+    "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-reach-router/browser.api.js",
+    "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-sitemap/dist/node.api.js",
+    "/home/luke/Downloads/topic_viz/topic-vis"
+  ],
+  "paths": {
+    "ROOT": "/home/luke/Downloads/topic_viz/topic-vis",
+    "SRC": "/home/luke/Downloads/topic_viz/topic-vis/src",
+    "DIST": "/home/luke/Downloads/topic_viz/topic-vis/dist",
+    "ASSETS": "/home/luke/Downloads/topic_viz/topic-vis/dist",
+    "PLUGINS": "/home/luke/Downloads/topic_viz/topic-vis/plugins",
+    "TEMP": "/home/luke/Downloads/topic_viz/topic-vis/tmp",
+    "ARTIFACTS": "/home/luke/Downloads/topic_viz/topic-vis/artifacts",
+    "PUBLIC": "/home/luke/Downloads/topic_viz/topic-vis/public",
+    "NODE_MODULES": "/home/luke/Downloads/topic_viz/topic-vis/node_modules",
+    "EXCLUDE_MODULES": "/home/luke/Downloads/topic_viz/topic-vis/node_modules",
+    "PACKAGE": "/home/luke/Downloads/topic_viz/topic-vis/package.json",
+    "HTML_TEMPLATE": "/home/luke/Downloads/topic_viz/topic-vis/dist/index.html",
+    "STATIC_DATA": "/home/luke/Downloads/topic_viz/topic-vis/dist/staticData"
+  },
+  "siteRoot": "/",
+  "basePath": "",
+  "publicPath": "/",
+  "assetsPath": "",
+  "extractCssChunks": false,
+  "inlineCss": false,
+  "babelExcludes": [],
+  "devServer": {
+    "host": "localhost",
+    "port": 3000
+  },
+  "terser": {
+    "terserOptions": {
+      "mangle": {},
+      "parse": {},
+      "compress": {},
+      "output": {}
+    }
+  }
+}
