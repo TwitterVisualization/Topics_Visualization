@@ -9,7 +9,7 @@
     "analyze": "react-static build --analyze",
     "serve": "serve dist -p 3000",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d docs"
   },
   "dependencies": {
     "@reach/router": "^1.2.1",

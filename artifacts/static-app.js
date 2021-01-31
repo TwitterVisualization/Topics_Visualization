@@ -27843,7 +27843,7 @@ function App() {
     }
   };
 
-  return /*#__PURE__*/external_react_default.a.createElement("div", null, /*#__PURE__*/external_react_default.a.createElement("p", null, "This is a test"), /*#__PURE__*/external_react_default.a.createElement("div", {
+  return /*#__PURE__*/external_react_default.a.createElement("div", null, /*#__PURE__*/external_react_default.a.createElement("p", null, "This is a test."), /*#__PURE__*/external_react_default.a.createElement("div", {
     style: {
       position: "fixed",
       top: "50%",

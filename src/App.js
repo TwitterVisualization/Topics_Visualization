@@ -39,7 +39,7 @@ function App() {
 
   return <div>
     <p>
-      This is a test
+      This is a test.
     </p>
     <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
       <div style={{ display: "flex", flexDirection: "row", spaceBetween: "10px" }} className="site-card-border-less-wrapper">
