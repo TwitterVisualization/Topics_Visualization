@@ -2,6 +2,8 @@ import path from 'path'
 import axios from 'axios'
 
 export default {
+  siteRoot: "https://twittervisualization.github.io",
+  basePath: "Topics_Visualization",
   getRoutes: async () => {
     const { data: posts } = await axios.get(
       'https://jsonplaceholder.typicode.com/posts'

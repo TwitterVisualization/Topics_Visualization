@@ -99,7 +99,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/ 	__webpack_require__.p = "https://twittervisualization.github.io/Topics_Visualization/";
 /******/
 /******/ 	// uncaught error handler for webpack runtime
 /******/ 	__webpack_require__.oe = function(err) {
@@ -693,7 +693,7 @@ var external_antd_ = __webpack_require__(3);
 // EXTERNAL MODULE: external "antd/dist/antd.css"
 var antd_css_ = __webpack_require__(44);
 
-// CONCATENATED MODULE: /home/luke/Downloads/topic_viz/topic-vis/src/data.js
+// CONCATENATED MODULE: /home/luke/Downloads/topic_viz-old/topic-vis_old/src/data.js
 /* harmony default export */ var data = ([{
   "name": "undefined",
   "topics": [{
@@ -27780,7 +27780,7 @@ var antd_css_ = __webpack_require__(44);
   }],
   "count": "106723"
 }]);
-// CONCATENATED MODULE: /home/luke/Downloads/topic_viz/topic-vis/src/App.js
+// CONCATENATED MODULE: /home/luke/Downloads/topic_viz-old/topic-vis_old/src/App.js
 
 
 
@@ -27789,6 +27789,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
+ //import ForkMeOnGithub from 'fork-me-on-github';
 
  //import './app.css'
 
@@ -27843,7 +27844,13 @@ function App() {
     }
   };
 
-  return /*#__PURE__*/external_react_default.a.createElement("div", null, /*#__PURE__*/external_react_default.a.createElement("p", null, "This is a test."), /*#__PURE__*/external_react_default.a.createElement("div", {
+  return /*#__PURE__*/external_react_default.a.createElement("div", null, /*#__PURE__*/external_react_default.a.createElement("ul", null, /*#__PURE__*/external_react_default.a.createElement("li", null, /*#__PURE__*/external_react_default.a.createElement("a", {
+    href: "https://github.com/TwitterVisualization/Topics_Visualization"
+  }, "Github repo")), /*#__PURE__*/external_react_default.a.createElement("li", null, /*#__PURE__*/external_react_default.a.createElement("a", {
+    href: "https://projector.tensorflow.org/?config=https://gist.githubusercontent.com/TwitterVisualization/0fce80610be9b46486f9d5a24b39b994/raw/e31cb7f5b5b264ed6814554c2203cdb5e0070faf/template_projector_config.json"
+  }, "Embeddings visualization")), /*#__PURE__*/external_react_default.a.createElement("li", null, /*#__PURE__*/external_react_default.a.createElement("a", {
+    href: "/world_tweets.html"
+  }, "Tweets geolocation"))), /*#__PURE__*/external_react_default.a.createElement("div", {
     style: {
       position: "fixed",
       top: "50%",
@@ -28131,7 +28138,7 @@ module.exports = require("react-dom");
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = require("/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static/lib/browser");
+module.exports = require("/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules/react-static/lib/browser");
 
 /***/ }),
 /* 15 */
@@ -29160,7 +29167,7 @@ module.exports = require("@babel/runtime/helpers/objectWithoutProperties");
 /* 41 */
 /***/ (function(module, exports) {
 
-module.exports = require("/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static/lib/browser/hooks/useStaticInfo");
+module.exports = require("/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules/react-static/lib/browser/hooks/useStaticInfo");
 
 /***/ }),
 /* 42 */

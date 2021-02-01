@@ -14,35 +14,35 @@
   "productionSourceMaps": false,
   "silent": false,
   "entry": "index.js",
+  "siteRoot": "https://twittervisualization.github.io",
+  "basePath": "Topics_Visualization",
   "plugins": [
     [
-      "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-source-filesystem/node.api.js",
+      "/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules/react-static-plugin-source-filesystem/node.api.js",
       {
-        "location": "/home/luke/Downloads/topic_viz/topic-vis/src/pages"
+        "location": "/home/luke/Downloads/topic_viz-old/topic-vis_old/src/pages"
       }
     ],
-    "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-reach-router/browser.api.js",
-    "/home/luke/Downloads/topic_viz/topic-vis/node_modules/react-static-plugin-sitemap/dist/node.api.js",
-    "/home/luke/Downloads/topic_viz/topic-vis"
+    "/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules/react-static-plugin-reach-router/browser.api.js",
+    "/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules/react-static-plugin-sitemap/dist/node.api.js",
+    "/home/luke/Downloads/topic_viz-old/topic-vis_old"
   ],
   "paths": {
-    "ROOT": "/home/luke/Downloads/topic_viz/topic-vis",
-    "SRC": "/home/luke/Downloads/topic_viz/topic-vis/src",
-    "DIST": "/home/luke/Downloads/topic_viz/topic-vis/dist",
-    "ASSETS": "/home/luke/Downloads/topic_viz/topic-vis/dist",
-    "PLUGINS": "/home/luke/Downloads/topic_viz/topic-vis/plugins",
-    "TEMP": "/home/luke/Downloads/topic_viz/topic-vis/tmp",
-    "ARTIFACTS": "/home/luke/Downloads/topic_viz/topic-vis/artifacts",
-    "PUBLIC": "/home/luke/Downloads/topic_viz/topic-vis/public",
-    "NODE_MODULES": "/home/luke/Downloads/topic_viz/topic-vis/node_modules",
-    "EXCLUDE_MODULES": "/home/luke/Downloads/topic_viz/topic-vis/node_modules",
-    "PACKAGE": "/home/luke/Downloads/topic_viz/topic-vis/package.json",
-    "HTML_TEMPLATE": "/home/luke/Downloads/topic_viz/topic-vis/dist/index.html",
-    "STATIC_DATA": "/home/luke/Downloads/topic_viz/topic-vis/dist/staticData"
+    "ROOT": "/home/luke/Downloads/topic_viz-old/topic-vis_old",
+    "SRC": "/home/luke/Downloads/topic_viz-old/topic-vis_old/src",
+    "DIST": "/home/luke/Downloads/topic_viz-old/topic-vis_old/dist",
+    "ASSETS": "/home/luke/Downloads/topic_viz-old/topic-vis_old/dist",
+    "PLUGINS": "/home/luke/Downloads/topic_viz-old/topic-vis_old/plugins",
+    "TEMP": "/home/luke/Downloads/topic_viz-old/topic-vis_old/tmp",
+    "ARTIFACTS": "/home/luke/Downloads/topic_viz-old/topic-vis_old/artifacts",
+    "PUBLIC": "/home/luke/Downloads/topic_viz-old/topic-vis_old/public",
+    "NODE_MODULES": "/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules",
+    "EXCLUDE_MODULES": "/home/luke/Downloads/topic_viz-old/topic-vis_old/node_modules",
+    "PACKAGE": "/home/luke/Downloads/topic_viz-old/topic-vis_old/package.json",
+    "HTML_TEMPLATE": "/home/luke/Downloads/topic_viz-old/topic-vis_old/dist/index.html",
+    "STATIC_DATA": "/home/luke/Downloads/topic_viz-old/topic-vis_old/dist/staticData"
   },
-  "siteRoot": "/",
-  "basePath": "",
-  "publicPath": "/",
+  "publicPath": "https://twittervisualization.github.io/Topics_Visualization/",
   "assetsPath": "",
   "extractCssChunks": false,
   "inlineCss": false,

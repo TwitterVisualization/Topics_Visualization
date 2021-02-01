@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { addPrefetchExcludes } from 'react-static'
+//import ForkMeOnGithub from 'fork-me-on-github';
 import { Card, List } from 'antd';
 
 //import './app.css'
@@ -38,9 +39,18 @@ function App() {
   }
 
   return <div>
-    <p>
-      This is a test.
-    </p>
+    {/*<ForkMeOnGithub repo="https://github.com/TwitterVisualization/Topics_Visualization/"/>*/}
+    <ul>
+      <li>
+        <a href="https://github.com/TwitterVisualization/Topics_Visualization">Github repo</a>
+      </li>
+      <li>
+        <a href="https://projector.tensorflow.org/?config=https://gist.githubusercontent.com/TwitterVisualization/0fce80610be9b46486f9d5a24b39b994/raw/e31cb7f5b5b264ed6814554c2203cdb5e0070faf/template_projector_config.json">Embeddings visualization</a>
+      </li>
+      <li>
+        <a href="/world_tweets.html">Tweets geolocation</a>
+      </li>
+    </ul>
     <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
       <div style={{ display: "flex", flexDirection: "row", spaceBetween: "10px" }} className="site-card-border-less-wrapper">
         <Card
