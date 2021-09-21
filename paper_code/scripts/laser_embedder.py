@@ -9,8 +9,9 @@ import random
 import string
 import emoji
 import multiprocessing as mp
+import traceback
 
-os.environ["LASER"] = "/home/massemin/LASER"
+os.environ["LASER"] = "/home/hartley/Topics_Visualization/paper_code/LASER"
 
 def random_string(len_string=20) :
     letters = string.ascii_lowercase
@@ -21,8 +22,11 @@ def preprocess_tweet(tweet, no_emoji=True):
     tweet = re.sub('((www\.[^\s]+)|(https?://[^\s]+)|(http?://[^\s]+))','<url>',tweet)
     tweet = re.sub('(\@[^\s]+)','<user>',tweet)
     try:
-        tweet = tweet.decode('unicode_escape').encode('ascii','ignore')
+        #tweet = tweet.decode('unicode_escape').encode('ascii','ignore')
+        #tweet = tweet.encode('ascii','ignore')
+        pass
     except:
+        traceback.print_exc()
         pass
     
     if no_emoji :
@@ -31,7 +35,7 @@ def preprocess_tweet(tweet, no_emoji=True):
     return tweet
 
 def laser_embed_file(src, dst, lang) :
-    os.chdir("/home/massemin/LASER/tasks/embed/")
+    os.chdir("/home/hartley/Topics_Visualization/paper_code/LASER/tasks/embed/")
     command = "bash ./embed.sh {} {} {}".format(src, lang, dst)
     os.system(command)
     
@@ -40,12 +44,16 @@ def load_laser_embs(file, count=-1, offset=0, dim=1024) :
     embeddings.resize(embeddings.shape[0] // dim, dim)
     return embeddings
 
-def laser_embed_texts(texts, lang, preprocess=True) :
+def laser_embed_texts(texts, lang, preprocess=True, tmp_dir=None) :
     
     ### Write texts in file ###
     
     file_id = random_string()
-    file_path = f"/mlo-container-scratch/massemin/{file_id}_tmp_laser.txt"
+    if not tmp_dir :
+        tmp_dir = "/mlo-container-scratch/hartley/"
+    
+    tmp_file = os.path.join(tmp_dir, f"{file_id}_tmp_laser.txt")
+    file_path = tmp_file
     if os.path.isfile(file_path) :
         os.remove(file_path)
         
@@ -65,7 +73,7 @@ def laser_embed_texts(texts, lang, preprocess=True) :
                     f.write(entry)
 
         # Embed the file
-        output_file = f"/mlo-container-scratch/massemin/{file_id}_tmp_laser.raw"
+        output_file = f"/mlo-container-scratch/hartley/{file_id}_tmp_laser.raw"
         laser_embed_file(file_path, output_file, lang)
         
         # Load its embeddings
@@ -79,5 +87,6 @@ def laser_embed_texts(texts, lang, preprocess=True) :
     
     except :
         os.remove(file_path)
+        traceback.print_exc()
     
     

@@ -3,6 +3,7 @@ import emoji
 import re
 import nltk
 nltk.download('stopwords')
+nltk.download('punkt')
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
@@ -14,6 +15,7 @@ from collections import defaultdict, Counter
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.linear_model import LogisticRegression
 from scipy.ndimage import gaussian_filter1d
 from scipy.stats import spearmanr, pearsonr
 import os
@@ -73,7 +75,7 @@ def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb
     pool = mp.Pool(20)
     for f_idx, f in tqdm(enumerate(files), total=len(files)) :
         
-        df = pd.read_parquet(f, columns=["id", "country_code", "text", "lang"])
+        df = pd.read_parquet(f, columns=["id", "country_code", "text", "lang"]).astype('unicode')
         
         if country_code is not None :            
             df = df[df.country_code == country_code]        
@@ -111,7 +113,7 @@ def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb
         
         
         # Count hashtags
-        c.update([h for x in df.hashtags.values for h in x.split(',')])        
+        c.update([h for x in df.hashtags.values for h in x.split(',') if h != ''])        
         
     return c.most_common()
 
@@ -119,16 +121,23 @@ def dbscan(model, counts_per_word, embeddings=None, sim_thresh=0.8, min_samples=
     
     
     if embeddings is None :
+        
+        #print('COUNTS PER WORD:', counts_per_word[:, 1])
+        
         # Keep only hashtags with more than min_occs occurences
         nb_to_keep = np.argmax(counts_per_word[:, 1].astype(int) < min_occs)
+        if nb_to_keep == 0 :
+            raise Exception(f'dbscan : No word with more than {min_occs} occurences')
 
         # Create fit data
-        model_words = set(model.wv.vocab.keys())
+        #model_words = set(model.wv.vocab.keys())
+        model_words = set(model.wv.index_to_key)
         words_kept = np.array([word for word, count in counts_per_word[:nb_to_keep] if word in model_words])
         X = np.array([model.wv[w] for w in words_kept])
         
     else :
         X = embeddings
+        #print('X2 :', X)
         words_kept = np.arange(len(X)).astype(str)
 
     # cosine DBScan
@@ -151,7 +160,9 @@ def find_topics(model, word_counts, topics_path, max_absorption=150, min_clust_s
     
     # First find sub topics
     topics = multiscale_dbscan(model, word_counts, None, max_absorption, min_clust_size, growth_path)
-    
+    if len(topics) == 0 :
+        raise 'Not enough data to find significant topics'
+    #print('TOPICS :', topics)
     embs = np.array([np.mean(model.wv[t], axis=0) for t in topics])
     
     # Consider higher topics
