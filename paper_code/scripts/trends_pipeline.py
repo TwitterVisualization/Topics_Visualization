@@ -15,14 +15,14 @@ from hash_utils import *
 force_compute=True
 
 # Limit computation to few files (useful for testing)
-nb_files=112 #None
+nb_files=None
 
 # ISO-2 country code (read only tweets from this country, None for all countries)
 country_code = None
 country_string = country_code if country_code is not None else "All"
 
 # Word2Vec params
-w2v_dim        = 150
+w2v_dim        = 300
 w2v_window     = 100
 w2v_min_counts = 10
 w2v_workers    = 30
@@ -32,7 +32,7 @@ user_path =   "/mlo-container-scratch/hartley"
 analysis_path = os.path.join(user_path, "twitter_covid_insights") # Where results will be stored
 tweets_path = os.path.join(user_path, "tweets")                      # Where raw df tweets are 
 tweets_piped_path = tweets_path + '_piped'                           # Where clean processed tweets will be stored 
-sent_classifier_path = os.path.join(user_path, "sentiment_140.pkl")
+sent_classifier_path = os.path.join(user_path, "sentiment140/sentiment_classifier.pkl")
 country_path = os.path.join(analysis_path, f"insights_{country_string}")
 lang_text_path    = os.path.join(country_path, "lang_files")
 
@@ -67,7 +67,7 @@ if counts_computed and not force_compute:
 else :
     print(f"Step 1/5 : Preparing df and counting words, dumping in {word_counts_path}")
     word_counts = np.array(prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=country_code, nb_files=nb_files))
-    pkl.dump(word_counts, open(word_counts_path, "wb"))
+    pkl.dump(word_counts, open(word_counts_path, "wb"), protocol=4)
     
 #print('word_counts')
 #print(word_counts)
@@ -110,4 +110,4 @@ else :
     print(f"Step 5/5 : Computing topic trends, dumping in {raw_trends_path}")
     
     sub_trends, higher_trends = topic_trends(tweets_piped_path, topics, country_code=None)
-    pkl.dump((sub_trends, higher_trends), open(raw_trends_path, 'wb'))
+    pkl.dump((sub_trends, higher_trends), open(raw_trends_path, 'wb'), protocol=4)
