@@ -12,7 +12,7 @@ from hash_utils import *
 ########### CONFIG ############
 
 # Ignore existing files
-force_compute=True
+force_compute=False
 
 # Limit computation to few files (useful for testing)
 nb_files=None
