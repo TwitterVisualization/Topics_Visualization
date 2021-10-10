@@ -31,7 +31,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="1" # GPU id
 
 from laser_embedder import *
 
-stop_words = stopwords.words('english')
+#stop_words = stopwords.words('english')
 porter = PorterStemmer()
 
 def clean_text(text) :
@@ -40,10 +40,11 @@ def clean_text(text) :
         return ''
     
     # No url
-    t = re.sub(r'https?:\/\/[^\s]*(\r|\n|\s|$)', '', text, flags=re.MULTILINE).strip()
+    t = re.sub(r'https?:\/\/[^\s]*(\r|\n|\s|$)', 'url_placeholder ', text, flags=re.MULTILINE).strip()
     
     # Remove hashtags and user mentions
-    t = re.sub(r'[@#][^\s]*(?:\r|\n|\s|$)', '', t).strip()
+    t = re.sub(r'[@][^\s]*(?:\r|\n|\s|$)', 'user_placeholder ', t).strip()
+    t = re.sub(r'[#][^\s]*(?:\r|\n|\s|$)', '', t).strip()
     
     # remove emojis
     t = "".join([c for c in t if c not in emoji.UNICODE_EMOJI])
@@ -56,11 +57,11 @@ def clean_text(text) :
 def tokenize_text(text) :
     
     text = text.lower()
-    text = "".join([char for char in text if char not in string.punctuation])
+    #text = "".join([char for char in text if char not in string.punctuation])
     words = word_tokenize(text)
-    filtered_words = [word for word in words if word not in stop_words]
-    stemmed = [porter.stem(word) for word in filtered_words]
-    return stemmed
+    #filtered_words = [word for word in words if word not in stop_words]
+    #stemmed = [porter.stem(word) for word in filtered_words]
+    return words
 
 # Used only in read_hash, defined here for multiprocessed serialization
 def find_hash(t) : return ['#'+x.lower() for x in re.findall(r"#(\w+)", t)] if not pd.isna(t) else []
@@ -68,7 +69,7 @@ def find_hash(t) : return ['#'+x.lower() for x in re.findall(r"#(\w+)", t)] if n
 def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb_files=None) :
     
     # Files containing tweets
-    files = [os.path.join(tweets_path,f) for f in  sorted(os.listdir(tweets_path))]
+    files = [os.path.join(tweets_path,f) for f in sorted(os.listdir(tweets_path)) if '.txt' not in f]
     files = files[:nb_files] if nb_files is not None else files        
     
     c = Counter()
@@ -85,7 +86,9 @@ def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb
         
         # Spot hashtags, save them in column
         cur_hashtags = pool.map(find_hash, df.text.values)
-        df['hashtags'] = np.array([",".join(h) for h in cur_hashtags])
+        #cur_hashtags = [find_hash(x).split(',') for x in df.text.values]
+        #df['hashtags'] = np.array([h.split(',') for h in cur_hashtags])
+        df['hashtags'] = cur_hashtags
         #df = df[df['hashtags'] != ''] => DON'T, hurts Word2Vec perf
         
         # Clean text -> Allows filtering        
@@ -104,7 +107,7 @@ def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb
         # Tokenize cleaned_texts and append hashtags
         texts = pool.map(tokenize_text, df.cleaned_text.values)
         for e, t in enumerate(texts) :
-            texts[e] += [x for x in cur_hashtags[e]]
+            texts[e] += [x for x in cur_hashtags[e].split(',')]
         
         # Save tweets in a file for Word2Vec
         mode = 'w' if f_idx == 0 else 'a'
@@ -488,7 +491,9 @@ def label_sentiments(piped_path, sent_classifier_path, lang_text_path) :
     return
 
 
-def topic_trends(tweets_piped_path, topics, country_code=None) :
+def topic_trends(tweets_piped_path, topics_path, country_code=None) :
+    
+    topics = pkl.load(open(topics_path, 'rb'))
     
     def update_occs(occs, values) :
         c = Counter()
@@ -525,14 +530,16 @@ def topic_trends(tweets_piped_path, topics, country_code=None) :
     neg_occs = {tag : occs[tag] - pos_occs[tag] if tag in pos_occs else occs[tag] for tag in occs}
         
     # Compute trends    
-    sub_topics, higher_topics = topics    
+    sub_topics, higher_topics = topics
+    print(f"There are {len(sub_topics)} topics and {len(higher_topics)} topics")
     sub_trends, higher_trends = {}, {}
     
     # Build trends for sub-topics TODO check correct axis
     for idx, hashtags in tqdm(sub_topics.items(), desc='sub_topics') :
-        sub_trends[str(idx)]       = np.sum([occs[h]     for h in hashtags], axis=0)
-        sub_trends['Pos-'+str(idx)] = np.sum([pos_occs[h] for h in hashtags], axis=0)
-        sub_trends['Neg-'+str(idx)] = np.sum([neg_occs[h] for h in hashtags], axis=0)
+        print(f'sub_topic with hashtags {hashtags}')
+        sub_trends[str(idx)]       = np.sum([occs[h]     for h in hashtags if len(occs[h])], axis=0)
+        sub_trends['Pos-'+str(idx)] = np.sum([pos_occs[h] for h in hashtags if len(pos_occs[h])], axis=0)
+        sub_trends['Neg-'+str(idx)] = np.sum([neg_occs[h] for h in hashtags if len(neg_occs[h])], axis=0)
 
         
     for idx, subs in higher_topics.items() :
@@ -542,3 +549,101 @@ def topic_trends(tweets_piped_path, topics, country_code=None) :
         higher_trends['Neg-'+str(idx)] = np.sum([sub_trends['Pos-'+x] for x in subs], axis=0)
 
     return sub_trends, higher_trends
+
+
+def find_hash(t) : return ','.join(['#'+x.lower() for x in re.findall(r"#(\w+)", t)]) if not pd.isna(t) else ''
+
+def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_path, trends_path) :
+    
+    files = [os.path.join(tweets_path,f) for f in  sorted(os.listdir(tweets_path))]
+    piped_files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]    
+
+    def update_occs(occs, values, day_nb) :
+        c = Counter()
+        c.update([h for x in values for h in x.split(',')])
+
+        for item in c.items() :
+            hashtag, count = item
+            to_prepend = day_nb - len(occs[hashtag])
+            occs[hashtag] += [0]*to_prepend + [count]
+        
+    pool = mp.Pool(20)
+
+    occs     = defaultdict(lambda : [])
+    pos_occs = defaultdict(lambda : [])
+    day_flux = []
+
+    day_nb=0
+    for piped_f, f, in tqdm(zip(piped_files, files), total=len(files), desc='trends') :
+
+        df = pd.read_parquet(f, columns=['id', 'text'])
+        df_piped = pd.read_parquet(piped_f, columns=['id','sentiment', 'cleaned_text', 'hashtags'])
+
+        df['hashtags'] = pool.map(find_hash, df.text.values)
+        df = df[df.hashtags != '']
+
+        dup_idx = df_piped.hashtags.duplicated(keep=False)
+
+        if any(dup_idx) :
+            dup_hash = set(df_piped.hashtags[dup_idx].values)
+
+            amb_idx = df.hashtags.isin(dup_hash)
+            ambiguous = df[amb_idx]
+            df = df[~amb_idx]
+            ambiguous['cleaned_text'] = pool.map(clean_text, ambiguous.text.values)
+            cols_to_keep = ['hashtags_x', 'sentiment']
+            disambigued = pd.merge(ambiguous, df_piped[dup_idx], left_on='cleaned_text', right_on='cleaned_text', how='left')
+
+        merged = pd.merge(df, df_piped, left_on='hashtags', right_on='hashtags', how='left').dropna()[['sentiment', 'hashtags']]
+        tweets_today = len(merged) + len(disambigued) if any(dup_idx) else len(merged)
+        day_flux.append(tweets_today)
+
+
+        if any(dup_idx) :
+            # Remember hashtags and sentiments
+            all_hashes = np.concatenate((merged.hashtags.values, disambigued.hashtags_x.values))
+            all_sentiments = np.concatenate((merged.sentiment.values, disambigued.sentiment.values))
+
+        else :
+            all_hashes = merged.hashtags.values
+            all_sentiments = merged.sentiment.values
+
+        update_occs(occs, all_hashes, day_nb)
+        update_occs(pos_occs, all_hashes[all_sentiments == 1], day_nb)
+        day_nb += 1
+
+    pkl.dump(np.array(day_flux), open(day_flux_path, 'wb'), protocol=4)
+
+    # Append missing zeros at the end
+    nb_days = len(files)
+    for k in occs :
+        occs[k] += [0]*(nb_days-len(occs[k]))
+        occs[k] = np.array(occs[k])
+
+        if k in pos_occs : 
+            pos_occs[k] += [0]*(nb_days-len(pos_occs[k]))
+            pos_occs[k] = np.array(pos_occs[k])
+
+
+    # Derive neg_occs
+    neg_occs = {tag : occs[tag] - pos_occs[tag] if tag in pos_occs else occs[tag] for tag in occs}
+    topics = pkl.load(open(topics_path, 'rb'))
+
+    # Compute trends    
+    sub_topics, higher_topics = topics    
+    sub_trends, higher_trends = {}, {}
+
+    # Build trends for sub-topics TODO check correct axis
+    for idx, hashtags in tqdm(sub_topics.items(), desc='sub_topics') :
+        sub_trends[str(idx)]       = np.sum([occs[h]     for h in hashtags if len(occs[h])], axis=0)
+        sub_trends['Pos-'+str(idx)] = np.sum([pos_occs[h] for h in hashtags if len(pos_occs[h])], axis=0)
+        sub_trends['Neg-'+str(idx)] = np.sum([neg_occs[h] for h in hashtags if len(neg_occs[h])], axis=0)
+
+
+    for idx, subs in higher_topics.items() :
+        subs = [str(x) for x in subs]
+        higher_trends[str(idx)]       = np.sum([sub_trends[x]       for x in subs], axis=0)
+        higher_trends['Pos-'+str(idx)] = np.sum([sub_trends['Pos-'+x] for x in subs], axis=0)
+        higher_trends['Neg-'+str(idx)] = np.sum([sub_trends['Pos-'+x] for x in subs], axis=0)
+
+    pkl.dump((sub_trends, higher_trends), open(trends_path, 'wb'), protocol=4)

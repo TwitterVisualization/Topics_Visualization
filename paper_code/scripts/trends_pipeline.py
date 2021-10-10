@@ -12,7 +12,7 @@ from hash_utils import *
 ########### CONFIG ############
 
 # Ignore existing files
-force_compute=False
+force_compute=True
 
 # Limit computation to few files (useful for testing)
 nb_files=None
@@ -40,15 +40,17 @@ if not os.path.isdir(country_path) :
     os.makedirs(country_path)
 
 # Computation Backup files
-texts_path        = os.path.join(country_path,  "texts.txt")
-word_counts_path  = os.path.join(country_path,  "word_counts.pkl")
-w2v_path          = os.path.join(country_path,  f"word2vec_{w2v_dim}d.model")
-topics_path       = os.path.join(country_path,  "topics.pkl")
-growth_path       = os.path.join(country_path, "topics_growth.pkl") 
-raw_trends_path   = os.path.join(country_path,  "trends_raw.pkl")
-what_country_path = os.path.join(analysis_path, "what_country.pkl")
-epi_path          = os.path.join(analysis_path, "model_data_owid.csv")
-report_path       = os.path.join(country_path,  "correlations_report.txt")
+texts_path           = os.path.join(country_path,  "texts.txt")
+word_counts_path     = os.path.join(country_path,  "word_counts.pkl")
+w2v_path             = os.path.join(country_path,  f"word2vec_{w2v_dim}d.model")
+topics_path          = os.path.join(country_path,  "topics.pkl")
+growth_path          = os.path.join(country_path,  "topics_growth.pkl") 
+raw_trends_path      = os.path.join(country_path,  "trends_raw.pkl")
+weighted_trends_path = os.path.join(country_path,  "trends.pkl")
+what_country_path    = os.path.join(analysis_path, "what_country.pkl")
+epi_path             = os.path.join(analysis_path, "model_data_owid.csv")
+report_path          = os.path.join(country_path,  "correlations_report.txt")
+day_flux_path        = os.path.join(country_path,  "day_flux.pkl")
 
 # What was computed already
 counts_computed    = os.path.isfile(word_counts_path)
@@ -56,13 +58,15 @@ word2vec_computed = os.path.isfile(w2v_path)
 topics_computed   = os.path.isfile(topics_path)
 sent_computed     = os.path.isdir(lang_text_path)
 what_country_computed = os.path.isfile(what_country_path)
-trends_computed = os.path.isfile(raw_trends_path)
+raw_trends_computed = os.path.isfile(raw_trends_path)
+weighted_trends_computed = os.path.isfile(weighted_trends_path) and os.path.isfile(day_flux_path)
 
 
 ########### Dataframe cleaning and word counts ############
 if counts_computed and not force_compute:    
-    print("Step 1/5 : Dataframe was already prepared, loading word counts.")
-    word_counts = np.array(pkl.load(open(word_counts_path, "rb")))
+    print("Step 1/5 : Dataframe was already prepared")
+    if not word2vec_computed or force_compute :
+        word_counts = np.array(pkl.load(open(word_counts_path, "rb")))
     
 else :
     print(f"Step 1/5 : Preparing df and counting words, dumping in {word_counts_path}")
@@ -75,8 +79,9 @@ else :
 
 ########### Compute Hashtags Embeddings ############
 if word2vec_computed and not force_compute:
-    print("Step 2/5 : Word2Vec embeddings were already computed, loading them.")
-    model = Word2Vec.load(w2v_path)
+    print("Step 2/5 : Word2Vec embeddings were already computed")
+    if not topics_computed or force_compute :
+        model = Word2Vec.load(w2v_path)
 
 else :
     print(f"Step 2/5 : Computing Word2Vec embeddings, dumping in {w2v_path}")
@@ -91,9 +96,6 @@ else :
     print(f"Step 3/5 : Computing topics, dumping in {topics_path}")
     find_topics(model, word_counts, topics_path, max_absorption=100, min_clust_size=5, growth_path=growth_path)
     
-topics = pkl.load(open(topics_path, 'rb'))
-    
-
 ########### Sentiment labelling ############
 
 if sent_computed and not force_compute :
@@ -104,10 +106,17 @@ else :
 
 ########### Topic trends derivation ############    
     
-if trends_computed and not force_compute :
-    print("Step 5/5 : Topic trends were already computed")
+if raw_trends_computed and not force_compute :
+    print("Step 5/5 part A : Raw topic trends were already computed")
 else :
-    print(f"Step 5/5 : Computing topic trends, dumping in {raw_trends_path}")
+    print(f"Step 5/5 part A : Computing raw topic trends, dumping in {raw_trends_path}")
     
-    sub_trends, higher_trends = topic_trends(tweets_piped_path, topics, country_code=None)
+    sub_trends, higher_trends = topic_trends(tweets_piped_path, topics_path, country_code=country_code)
     pkl.dump((sub_trends, higher_trends), open(raw_trends_path, 'wb'), protocol=4)
+    
+if weighted_trends_computed and not force_recompute :
+    print("Step 5/5 part B : weighted topic trends were already computed")
+else :
+    print(f"Step 5/5 part B : Computing weighted topic trends, dumping in {weighted_trends_path}")
+    weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_path, weighted_trends_path)
+
