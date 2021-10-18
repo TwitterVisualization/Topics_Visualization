@@ -13,7 +13,7 @@ from tqdm import tqdm_notebook, tqdm
 import multiprocessing as mp
 from collections import defaultdict, Counter
 import matplotlib.pyplot as plt
-from sklearn.cluster import DBSCAN
+#from sklearn.cluster import DBSCAN
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.linear_model import LogisticRegression
 from scipy.ndimage import gaussian_filter1d
@@ -25,6 +25,9 @@ mpl.rcParams['figure.dpi'] = 300
 import multiprocessing as mp
 import io
 import sys
+import cudf
+from cuml.cluster import DBSCAN
+from cuml.metrics import pairwise_distances
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 os.environ["CUDA_VISIBLE_DEVICES"]="1" # GPU id
@@ -120,6 +123,31 @@ def prepare_df(tweets_path, texts_path, tweets_piped_path, country_code=None, nb
         
     return c.most_common()
 
+def s2v_txt_to_dict(s2v_txt, s2v_out, s2v_dim) :
+    final_dict = {}
+    with open(s2v_txt, encoding='utf8') as f :
+        lines = f.readlines()
+        for e, line in tqdm.tqdm(enumerate(lines), total=len(lines)) :
+            split = line.split(' ')
+            word = split[0]
+            if word[0] == '#' :
+                if e == len(lines) - 1 :
+                    arr = np.array(split[1:]).astype(float)
+                    if len(arr) != s2v_dim : 
+                        raise Exception (f'len not {s2v_dim} : {split[1:]}')
+                else :
+                    # Account for final \n
+                    arr = np.array(split[1:-1]).astype(float)
+
+                    if len(arr) != s2v_dim : 
+                        raise Exception (f'len not {s2v_dim} : {split[1:-1]}')
+
+
+
+                #print('len arr:', len(arr))
+                final_dict[word] = arr
+    pkl.dump(final_dict, open(s2v_out, "wb"), protocol=4)
+
 def dbscan(model, counts_per_word, embeddings=None, sim_thresh=0.8, min_samples=5, min_occs=1000, verbose=False) :
     
     
@@ -147,6 +175,10 @@ def dbscan(model, counts_per_word, embeddings=None, sim_thresh=0.8, min_samples=
     clustering = DBSCAN(eps=1-sim_thresh, min_samples=min_samples, metric='cosine').fit(X)
     clust_labels = clustering.labels_
     
+    # Setup and fit clusters
+    dbscan_float = DBSCAN(eps=1-sim_thresh, min_samples=min_samples)
+    dbscan_float.fit(gdf_float)
+    
     if verbose :
         
         print(np.bincount(clust_labels+1)[1:])
@@ -159,17 +191,88 @@ def dbscan(model, counts_per_word, embeddings=None, sim_thresh=0.8, min_samples=
                 
     return clust_labels, words_kept
 
-def find_topics(model, word_counts, topics_path, max_absorption=150, min_clust_size=5, growth_path=None) :
+def dbscan_gpu(model, counts_per_word, embeddings=None, sim_thresh=0.8, min_samples=5, min_occs=1000, verbose=False, s2v=False) :
+    
+    
+    if embeddings is None :
+        
+        #print('COUNTS PER WORD:', counts_per_word[:, 1])
+        
+        # Keep only hashtags with more than min_occs occurences
+        nb_to_keep = np.argmax(counts_per_word[:, 1].astype(int) < min_occs)
+        if nb_to_keep == 0 :
+            raise Exception(f'dbscan : No word with more than {min_occs} occurences')
+        else :
+            pass
+            #print(f'dbscan : Keepings {nb_to_keep} words with more than {min_occs} occurences')
+
+        # Create fit data
+        #model_words = set(model.wv.vocab.keys())
+        if not s2v :
+            model_words = set(model.wv.index_to_key)
+        else :
+            model_words = set(model.keys())
+            
+        words_kept = np.array([word for word, count in counts_per_word[:nb_to_keep] if word in model_words])
+        #print('1- len(words_kept) :', len(words_kept))
+        X = cudf.DataFrame()
+        
+        if s2v :
+            transposed = np.array([model[w] for w in words_kept]).transpose()
+        else :
+            transposed = np.array([model.wv[w] for w in words_kept]).transpose()
+            
+        for e, v in enumerate(transposed) :
+            X[e] = v
+        X = pairwise_distances(X, metric='cosine')
+        
+    else :
+        X = cudf.DataFrame()
+        for e, v in enumerate(embeddings.transpose()) :
+            X[e] = v
+        X = pairwise_distances(X, metric='cosine')
+        words_kept = np.arange(len(embeddings)).astype(str)
+        #print('2- len(words_kept) :', len(words_kept))
+
+    # cosine DBScan
+    #clustering = DBSCAN(eps=1-sim_thresh, min_samples=min_samples, metric='cosine').fit(X)
+    #clust_labels = clustering.labels_
+    
+    # Setup and fit clusters
+    # Create and populate a GPU DataFrame
+    #print('len(X):', len(X))
+    clustering = DBSCAN(eps=1-sim_thresh, min_samples=min_samples, metric="precomputed").fit(X)
+    clust_labels = clustering.labels_.to_array()
+    #print('labels :', clust_labels)
+    #.to_pandas().values
+    #print('len(clust_labels) :', len(clust_labels))
+    
+    if verbose :
+        
+        print(np.bincount(clust_labels+1)[1:])
+
+        for e in range(clust_labels.max() + 1) :
+            print(f"Topic {e} :")
+            tags = np.array(counts_per_word)[:len(clust_labels)][clust_labels == e]
+            for tag in tags :
+                print(f"\t{tag}")
+                
+    return clust_labels, words_kept
+
+def find_topics(model, word_counts, topics_path, max_absorption=150, min_clust_size=5, growth_path=None, s2v=False) :
     
     # First find sub topics
-    topics = multiscale_dbscan(model, word_counts, None, max_absorption, min_clust_size, growth_path)
+    topics = multiscale_dbscan(model, word_counts, None, max_absorption, min_clust_size, growth_path, s2v=s2v)
     if len(topics) == 0 :
-        raise 'Not enough data to find significant topics'
+        raise Exception('Not enough data to find significant topics')
     #print('TOPICS :', topics)
-    embs = np.array([np.mean(model.wv[t], axis=0) for t in topics])
+    if not s2v :
+        embs = np.array([np.mean(model.wv[t], axis=0) for t in topics])
+    else :
+        embs = np.array([np.mean([model[x] for x in t], axis=0) for t in topics])
     
     # Consider higher topics
-    meta_topics = multiscale_dbscan(None, None, embs, max_absorption, min_clust_size)
+    meta_topics = multiscale_dbscan(None, None, embs, max_absorption, min_clust_size, s2v=s2v)
     
     # Turn topics into dictionnaries
     topics = dict(zip(np.arange(len(topics)), topics))
@@ -178,31 +281,34 @@ def find_topics(model, word_counts, topics_path, max_absorption=150, min_clust_s
     # Save everything in memory
     pkl.dump((topics, meta_topics), open(topics_path, 'wb'))
 
-def multiscale_dbscan(model, word_counts, embeddings=None, max_absorption=150, min_clust_size=5, growth_path=None) :
+def multiscale_dbscan(model, word_counts, embeddings=None, max_absorption=150, min_clust_size=5, growth_path=None, s2v=False) :
     
     clusters = []
     
     # Run iterations of dbscan
-    val_to_try = np.arange(0.5, 1, 0.001)
+    val_to_try = np.arange(0.5, 1, 0.0003)
     save_eps = (embeddings is None)
     
     for epsilon in tqdm(val_to_try) :
         if embeddings is None :
-            clust_labels, words_kept = dbscan(model, 
+            clust_labels, words_kept = dbscan_gpu(model, 
                                               word_counts, 
                                               sim_thresh=epsilon, 
                                               min_samples=1, 
-                                              min_occs=50, 
-                                              verbose=False)
+                                              min_occs=700, 
+                                              verbose=False,
+                                              s2v=s2v)
         else :
-            clust_labels, words_kept = dbscan(None, 
+            clust_labels, words_kept = dbscan_gpu(None, 
                                               None, 
                                               embeddings=embeddings, 
                                               sim_thresh=epsilon, 
                                               min_samples=1, 
                                               min_occs=100, 
-                                              verbose=False)
+                                              verbose=False,
+                                              s2v=s2v)
             
+        #print('len(clust_labels) :', len(clust_labels))
         clusters.append(clust_labels)
 
     clusters = np.array(clusters[::-1])
@@ -536,7 +642,7 @@ def topic_trends(tweets_piped_path, topics_path, country_code=None) :
     
     # Build trends for sub-topics TODO check correct axis
     for idx, hashtags in tqdm(sub_topics.items(), desc='sub_topics') :
-        print(f'sub_topic with hashtags {hashtags}')
+        #print(f'sub_topic with hashtags {hashtags}')
         sub_trends[str(idx)]       = np.sum([occs[h]     for h in hashtags if len(occs[h])], axis=0)
         sub_trends['Pos-'+str(idx)] = np.sum([pos_occs[h] for h in hashtags if len(pos_occs[h])], axis=0)
         sub_trends['Neg-'+str(idx)] = np.sum([neg_occs[h] for h in hashtags if len(neg_occs[h])], axis=0)
@@ -555,7 +661,7 @@ def find_hash(t) : return ','.join(['#'+x.lower() for x in re.findall(r"#(\w+)",
 
 def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_path, trends_path) :
     
-    files = [os.path.join(tweets_path,f) for f in  sorted(os.listdir(tweets_path))]
+    files = [os.path.join(tweets_path,f) for f in  sorted(os.listdir(tweets_path)) if f[-4:] != '.txt']
     piped_files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]    
 
     def update_occs(occs, values, day_nb) :
@@ -576,8 +682,8 @@ def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_
     day_nb=0
     for piped_f, f, in tqdm(zip(piped_files, files), total=len(files), desc='trends') :
 
-        df = pd.read_parquet(f, columns=['id', 'text'])
-        df_piped = pd.read_parquet(piped_f, columns=['id','sentiment', 'cleaned_text', 'hashtags'])
+        df = pd.read_parquet(f, columns=['text'])
+        df_piped = pd.read_parquet(piped_f, columns=['sentiment', 'cleaned_text', 'hashtags'])
 
         df['hashtags'] = pool.map(find_hash, df.text.values)
         df = df[df.hashtags != '']

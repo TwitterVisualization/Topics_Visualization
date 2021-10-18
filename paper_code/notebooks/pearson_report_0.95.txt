@@ -1,0 +1,69 @@
+------------------------------
+REPORT FOR USA
+------------------------------
+
+
+CASES
+Found 4 strong positive correlations
+Found 0 strong negative correlations
+
+Positive correlations :
+	0.951/4.12e-250 : 727 = #lottoresultado-#lottoactivo-#epatronus-#trioactivo-#elpatronus
+	0.951/3.83e-251 : 87 = #hidekisaijo-#歌謡曲-#邦楽-#citypop
+	0.953/1.33e-255 : 215 = #assignmenthelp-#homeworkhelp-#thesis-#language-#researchpaper-#studyabroad-#paperpay-#coursework-#geography-#onlinetraining-#paysomeone-#learnenglish-#canvas-#ncat-#esl-#fsu-#courses-#someonehelp-#domyhomework-#onlinecourse-#powerpoint-#languages-#payessay-#udemy-#payassignment-#essaywriting-#umd-#ielts-#vocabulary-#asu-#languagelearning-#nyu-#gsu-#discussions-#quizzes-#paydue-#paywrite-#englishteacher-#gramfam-#elt-#ssu-#pvamu-#englishclass-#masters-#grammar-#pearson-#tefl-#quiztime-#msexcel-#umuc-#txsu-#blackboard-#myasu-#proposals-#fiu-#nccu-#twu-#uncp-#wssu-#asutwitter-#dissertations-#researchpapers-#aleks-#ksu-#bgsu-#ung
+	0.954/2.35e-258 : 710 = #ortsrat_detmerode-#ordnungsamt_wolfsburg-#wvg-#polizei_wob-#stadt_wolfsburg-#justcantstopbeingassholes
+
+
+DEATHS
+Found 0 strong positive correlations
+Found 0 strong negative correlations
+
+
+
+RECOVERED
+Found 2 strong positive correlations
+Found 0 strong negative correlations
+
+Positive correlations :
+	0.954/2.01e-257 : 215 = #assignmenthelp-#homeworkhelp-#thesis-#language-#researchpaper-#studyabroad-#paperpay-#coursework-#geography-#onlinetraining-#paysomeone-#learnenglish-#canvas-#ncat-#esl-#fsu-#courses-#someonehelp-#domyhomework-#onlinecourse-#powerpoint-#languages-#payessay-#udemy-#payassignment-#essaywriting-#umd-#ielts-#vocabulary-#asu-#languagelearning-#nyu-#gsu-#discussions-#quizzes-#paydue-#paywrite-#englishteacher-#gramfam-#elt-#ssu-#pvamu-#englishclass-#masters-#grammar-#pearson-#tefl-#quiztime-#msexcel-#umuc-#txsu-#blackboard-#myasu-#proposals-#fiu-#nccu-#twu-#uncp-#wssu-#asutwitter-#dissertations-#researchpapers-#aleks-#ksu-#bgsu-#ung
+	0.957/8.28e-264 : 135 = #dosis-#frecuencia-#clarin-#puntalinforma-#lanacion-#puntalvillamaria
+
+
+NEW_CASES
+Found 0 strong positive correlations
+Found 0 strong negative correlations
+
+
+
+MOBILITY_GOOGLE_INDEX
+Found 0 strong positive correlations
+Found 0 strong negative correlations
+
+
+
+TESTS
+Found 0 strong positive correlations
+Found 0 strong negative correlations
+
+
+
+PEOPLE_VACCINATED
+Found 0 strong positive correlations
+Found 8 strong negative correlations
+
+
+Negative correlations :
+	-0.952/6.58e-105 : 361 = #leeds-#sheffield-#yorkshire-#devon-#lancashire-#cheshire-#derby-#blackburn-#altrincham-#macclesfield
+	-0.952/4.49e-105 : 449 = #tunein-#nowonair-#tuneinnow-#nowplayingonstarfm-#teddiizzle-#isstarfmbabey-#ghostinnovations-#pmgroovewithteddy-#wedeyjam-#thegoodmorninginsidedismorningshow-#feelourflowlive-#loyalbros-#we_dey_play
+	-0.955/1.3e-107 : 772 = #ww-#musiclov3rz-#30days30videos-#philippeans1v12-#messagetochristians
+	-0.955/1.93e-108 : 10 = #draw-#sketchbook-#dibujo-#ilustracion
+	-0.963/8.67e-117 : 116 = #twitch-#twitchstreamer-#streamer-#stream-#warzone-#supportsmallstreamers-#twitchaffiliate-#callofduty-#twitchtv-#smallstreamer-#cod-#twitchstreamers-#smallstreamersconnect-#gamergirl-#modernwarfare-#gamingcommunity-#coldwar-#smallstreamercommunity-#twitchde-#twitchstream-#supportsmallstreams-#ps4live-#callofdutymodernwarfare-#twitchaffilate-#smallstreamers
+	-0.964/1.08e-117 : 604 = #b117-#mutation-#p1-#b1351
+	-0.971/3.81e-127 : 292 = #addiction-#sober-#bipolar-#addictionrecovery-#sobriety-#alcoholism-#addictiontreatment-#soberlife
+	-0.971/3.32e-127 : 283 = #shoplocal-#supportlocal-#supportsmallbusiness-#buylocal-#supportsmallbusinesses-#supportlocalbusiness-#eatlocal
+
+
+DAILY_VACCINATIONS
+Found 0 strong positive correlations
+Found 0 strong negative correlations
+
