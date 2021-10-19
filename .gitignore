@@ -1,4 +1,4 @@
 node_modules
 dist
-
+paper_code/plots/
 *.csv
