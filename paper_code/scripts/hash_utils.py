@@ -617,9 +617,12 @@ def topic_trends(tweets_piped_path, topics_path, country_code=None) :
     
     # Build occurences per day
     for day_nb, f in tqdm(enumerate(files), total=len(files), desc='occs') :
-        df = pd.read_parquet(f, columns=['hashtags', 'sentiment'])        
+        # TODO: missing sentiment classifier path.
+        # df = pd.read_parquet(f, columns=['hashtags', 'sentiment'])
+        df = pd.read_parquet(f, columns=['hashtags'])   
         update_occs(occs, df.hashtags.values)
-        update_occs(pos_occs, df[df.sentiment == 1].hashtags.values)
+        # TODO: missing sentiment classifier path.
+        # update_occs(pos_occs, df[df.sentiment == 1].hashtags.values)
             
     # Append missing zeros at the end
     nb_days = len(files)
@@ -683,7 +686,9 @@ def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_
     for piped_f, f, in tqdm(zip(piped_files, files), total=len(files), desc='trends') :
 
         df = pd.read_parquet(f, columns=['text'])
-        df_piped = pd.read_parquet(piped_f, columns=['sentiment', 'cleaned_text', 'hashtags'])
+        # TODO: missing sentiment classifier path.
+        # df_piped = pd.read_parquet(piped_f, columns=['sentiment', 'cleaned_text', 'hashtags'])
+        df_piped = pd.read_parquet(piped_f, columns=['cleaned_text', 'hashtags'])
 
         df['hashtags'] = pool.map(find_hash, df.text.values)
         df = df[df.hashtags != '']
@@ -697,10 +702,14 @@ def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_
             ambiguous = df[amb_idx]
             df = df[~amb_idx]
             ambiguous['cleaned_text'] = pool.map(clean_text, ambiguous.text.values)
-            cols_to_keep = ['hashtags_x', 'sentiment']
+            # TODO: missing sentiment classifier path.
+            # cols_to_keep = ['hashtags_x', 'sentiment']
+            cols_to_keep = ['hashtags_x']
             disambigued = pd.merge(ambiguous, df_piped[dup_idx], left_on='cleaned_text', right_on='cleaned_text', how='left')
-
-        merged = pd.merge(df, df_piped, left_on='hashtags', right_on='hashtags', how='left').dropna()[['sentiment', 'hashtags']]
+            
+        # TODO: missing sentiment classifier path.
+        # merged = pd.merge(df, df_piped, left_on='hashtags', right_on='hashtags', how='left').dropna()[['sentiment', 'hashtags']]
+        merged = pd.merge(df, df_piped, left_on='hashtags', right_on='hashtags', how='left').dropna()[['hashtags']]
         tweets_today = len(merged) + len(disambigued) if any(dup_idx) else len(merged)
         day_flux.append(tweets_today)
 
@@ -708,14 +717,16 @@ def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_
         if any(dup_idx) :
             # Remember hashtags and sentiments
             all_hashes = np.concatenate((merged.hashtags.values, disambigued.hashtags_x.values))
-            all_sentiments = np.concatenate((merged.sentiment.values, disambigued.sentiment.values))
+            # TODO: missing sentiment classifier path.
+            # all_sentiments = np.concatenate((merged.sentiment.values, disambigued.sentiment.values))
 
         else :
             all_hashes = merged.hashtags.values
-            all_sentiments = merged.sentiment.values
+            # TODO: missing sentiment classifier path.
+            # all_sentiments = merged.sentiment.values
 
         update_occs(occs, all_hashes, day_nb)
-        update_occs(pos_occs, all_hashes[all_sentiments == 1], day_nb)
+        # update_occs(pos_occs, all_hashes[all_sentiments == 1], day_nb)
         day_nb += 1
 
     pkl.dump(np.array(day_flux), open(day_flux_path, 'wb'), protocol=4)
