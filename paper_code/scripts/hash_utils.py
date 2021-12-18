@@ -600,17 +600,19 @@ def label_sentiments(piped_path, sent_classifier_path, lang_text_path) :
 def topic_trends(tweets_piped_path, topics_path, country_code=None) :
     
     topics = pkl.load(open(topics_path, 'rb'))
-    
+    print("OK UNTILL HERE")
     def update_occs(occs, values) :
         c = Counter()
         c.update([h for x in values for h in x.split(',')])
         
-        for item in c.items() :
+        for item in c.items():
             hashtag, count = item
             to_prepend = day_nb - len(occs[hashtag])
             occs[hashtag] += [0]*to_prepend + [count]
     
-    files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]
+    #files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]
+    
+    files = [tweets_piped_path] #TO REMOVE!
     
     occs     = defaultdict(lambda : [])
     pos_occs = defaultdict(lambda : [])

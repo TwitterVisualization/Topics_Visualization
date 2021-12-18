@@ -1,0 +1,16 @@
+nohup: ignoring input
+[W 16:56:53.859 NotebookApp] Unrecognized alias: 'P', it will have no effect.
+[C 16:56:53.859 NotebookApp] Bad config encountered during initialization: Error loading argument P=['6666'], values whose keys begin with an uppercase char must be Config instances: 'P', DeferredConfigString('6666')
+dy in use, trying another port.
+[I 16:56:49.752 NotebookApp] Serving notebooks from local directory: /mlodata1/raileanu/Topics_Visualization/paper_code/scripts
+[I 16:56:49.752 NotebookApp] Jupyter Notebook 6.4.6 is running at:
+[I 16:56:49.752 NotebookApp] http://localhost:8891/?token=cb639d08476b1fda89135a759158f134cade534a8141d9ee
+[I 16:56:49.753 NotebookApp]  or http://127.0.0.1:8891/?token=cb639d08476b1fda89135a759158f134cade534a8141d9ee
+[I 16:56:49.753 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 16:56:49.772 NotebookApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/raileanu/.local/share/jupyter/runtime/nbserver-2116511-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8891/?token=cb639d08476b1fda89135a759158f134cade534a8141d9ee
+     or http://127.0.0.1:8891/?token=cb639d08476b1fda89135a759158f134cade534a8141d9ee
