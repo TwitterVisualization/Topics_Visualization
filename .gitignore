@@ -1,4 +1,4 @@
 node_modules
 dist
-paper_code/visualizations/plots/
+paper_code/visualizations/plots/*.svg
 *.csv

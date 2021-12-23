@@ -1,1 +1,65 @@
 Sample tweets loaded!
+------ Topic 0 ------
+ 'business'  'change'  'rule'  'begin'  'campaign'  'politician' 'watch' 'hi'  'implement'  'owner'
+
+------ Topic 1 ------
+ 'thank'  'away'  'variant'  'll'  'delta'  'idiot'  'covid'  'player' 'hope'  'room'
+
+------ Topic 2 ------
+ 'come'  'long'  'friend'  'spend'  'single'  'border'  'damn'  'common'  'tv'  'cold'
+
+------ Topic 3 ------
+ 'covid'  'du'  'vaccin'  'plus'  'ne'  'je'  'sont'     'nous'
+
+------ Topic 4 ------
+ 'give'  'will'  'dangerous'  'demand'  'benefit'  'simple'  'respect'  'gate'  'vaccine'  'doubt'
+
+------ Topic 5 ------
+ 'live'  'hard'  'casa'  'county'  'event'  'eu'  'vulnerable'  'durante'  'joke' 'way'
+
+------ Topic 6 ------
+ 'news'  'u'  'india' 'good'  'system'  'esto'  'avoid'  'isolate'  'worth'  'wife'
+
+------ Topic 7 ------
+ 'sogenannte'  'wellenbrecher'  'delirious'  'egoistischen'  'soe'  'colonialism'  'neighbours'  'tnlockdown'  'mundourl_placeholder'  'zhlen'
+
+------ Topic 8 ------
+ 'corona'  'twitter'  'mental' 'ah'  'ja'  'med'  'plant'  'har'  'wa'  'vi'
+
+------ Topic 9 ------
+ 'travel'  'casos'  'question'  'covid-'  'keep'  'class'  'answer' 'great'  'teacher'  'ban'
+
+------ Topic 10 ------
+ 'case' '  'death'  '  '.'  'high'  'rate'  'covid-'  'covid'  'new'
+
+------ Topic 11 ------
+ 'little' 'lockdown'  'air'  'university'  'easy'  'manage'  '='  'limit'  'london'  'estoy'
+
+------ Topic 12 ------
+ 'health'  'care'  'worker'  'covid-'  'pandemic'  'visit'  'healthcare'  'matter' 'like'  'governor'
+
+------ Topic 13 ------
+ 'immunity'  'official'  'population'  'wish'  'herd'  'final'  'project'  'enjoy'  'attend'  'address'
+
+------ Topic 14 ------
+ 'send'  'dr'  'food' 'need' '|'  'bed'  'entire'  'access'  'street'  'icu'
+
+------ Topic 15 ------
+'yes'  'current'  'nhs' 'love'  'nursing'  'june'  'light'  'roll'  'water'  '>'
+
+------ Topic 16 ------
+  'essential'  'compare'  'example'  'damage' 'china' 'pandemia'  'schedule'  'winter'  'bitch'
+
+------ Topic 17 ------
+ 'stand'  'u.s'  'guess'  'attack'  'sad'  'complete'  'severe'  'till' 'feel' 'right'
+
+------ Topic 18 ------
+'coronavirus'  'effect'  'market' 'pandemic' 'yeah'  'stock'  'coronavirus' 'work'  'major'  'pandemic'
+
+------ Topic 19 ------
+ 'treatment'  'thousand'  'citizen'  'true'  'add'  'recover'  'lt'  'completely'  'absolutely'  'mascara'
+
+
+Perplexity:  -9.964313834735542
+
+Coherence Score:  0.3988243066235828
