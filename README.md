@@ -1,9 +1,6 @@
-# Topic Visualization
+# [COVID19 Twitter Topics Visualizations](https://topics.derinbay.com/)
 
-[Interactive topic visualization](https://topics.derinbay.com/)
-
-
-# Socio-epidemiological insights from a yearlong COVID-19 twitter stream
+## Socio-epidemiological Insights From a Yearlong COVID-19 Twitter Stream
 
 This repository contains the code necessary to generate our results, presented in paper XXX.
 
