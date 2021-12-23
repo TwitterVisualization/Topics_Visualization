@@ -1,6 +1,6 @@
 # Topic Visualization
 
-[Interactive topic visualization](https://twittervisualization.github.io/Topics_Visualization/)
+[Interactive topic visualization](https://topics.derinbay.com/)
 
 
 # Socio-epidemiological insights from a yearlong COVID-19 twitter stream
