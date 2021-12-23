@@ -71,7 +71,7 @@ weighted_trends_computed = os.path.isfile(weighted_trends_path) and os.path.isfi
 # if counts_computed and not force_compute:    
 #     print("Step 1/5 : Dataframe was already prepared")
 #     if not word2vec_computed or not topics_computed:
-word_counts = np.array(pkl.load(open(word_counts_path, "rb")))
+#        word_counts = np.array(pkl.load(open(word_counts_path, "rb")))
     
 # else:
 #     print(f"Step 1/5 : Preparing df and counting words, dumping in {word_counts_path}")
@@ -84,7 +84,7 @@ word_counts = np.array(pkl.load(open(word_counts_path, "rb")))
 #     if word2vec_computed and not force_compute:
 #         print("Step 2/5 : Word2Vec embeddings were already computed")
 #         if not topics_computed:
-model = Word2Vec.load(w2v_path)
+#            model = Word2Vec.load(w2v_path)
 
 #     else:
 #         print(f"Step 2/5 : Computing Word2Vec embeddings, dumping in {w2v_path}")
@@ -97,21 +97,21 @@ model = Word2Vec.load(w2v_path)
 #     model = pkl.load(open('/scratch/hartley/twitter_covid_insights/insights_All/s2v_dict_700.pkl', 'rb'))
 
 ########### Topics creation ############
-if topics_computed and not force_compute:
-    print("Step 3/5 : Topics were already computed")
-else:
-    print(f"Step 3/5 : Computing topics, dumping in {topics_path}")
-    find_topics(model, word_counts, topics_path, max_absorption=100, min_clust_size=5, growth_path=growth_path, s2v=(model_type == ModelType.S2V))
+# if topics_computed and not force_compute:
+#     print("Step 3/5 : Topics were already computed")
+# else:
+#     print(f"Step 3/5 : Computing topics, dumping in {topics_path}")
+#     find_topics(model, word_counts, topics_path, max_absorption=100, min_clust_size=5, growth_path=growth_path, s2v=(model_type == ModelType.S2V))
 
 
-########### Sentiment labelling ############
+# ########### Sentiment labelling ############
 
-if sent_computed and not force_compute :
-    print("Step 4/5 : Sentiments were already computed")
-else:
-    print(f"Step 4/5 : Computing sentiment labels, dumping lang files in {lang_text_path}")
-    # TODO: missing sentiment classifier path.
-    # label_sentiments(tweets_piped_path, sent_classifier_path, lang_text_path)
+# if sent_computed and not force_compute :
+#     print("Step 4/5 : Sentiments were already computed")
+# else:
+#     print(f"Step 4/5 : Computing sentiment labels, dumping lang files in {lang_text_path}")
+#     # TODO: missing sentiment classifier path.
+#     # label_sentiments(tweets_piped_path, sent_classifier_path, lang_text_path)
 
 ########### Topic trends derivation ############    
     

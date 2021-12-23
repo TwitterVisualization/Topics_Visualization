@@ -600,25 +600,23 @@ def label_sentiments(piped_path, sent_classifier_path, lang_text_path) :
 def topic_trends(tweets_piped_path, topics_path, country_code=None) :
     
     topics = pkl.load(open(topics_path, 'rb'))
-    print("OK UNTILL HERE")
+    
     def update_occs(occs, values) :
         c = Counter()
         c.update([h for x in values for h in x.split(',')])
         
-        for item in c.items():
+        for item in c.items() :
             hashtag, count = item
             to_prepend = day_nb - len(occs[hashtag])
             occs[hashtag] += [0]*to_prepend + [count]
     
-    #files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]
-    
-    files = [tweets_piped_path] #TO REMOVE!
+    files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]
     
     occs     = defaultdict(lambda : [])
     pos_occs = defaultdict(lambda : [])
     
     # Build occurences per day
-    for day_nb, f in tqdm(enumerate(files), total=len(files), desc='occs') :
+    for day_nb, f in tqdm(enumerate(files), total=len(files), desc='occs'):
         # TODO: missing sentiment classifier path.
         # df = pd.read_parquet(f, columns=['hashtags', 'sentiment'])
         df = pd.read_parquet(f, columns=['hashtags'])   
@@ -666,8 +664,8 @@ def find_hash(t) : return ','.join(['#'+x.lower() for x in re.findall(r"#(\w+)",
 
 def weighted_topic_trends(tweets_path, tweets_piped_path, day_flux_path, topics_path, trends_path) :
     
-    files = [os.path.join(tweets_path,f) for f in  sorted(os.listdir(tweets_path)) if f[-4:] != '.txt']
-    piped_files = [os.path.join(tweets_piped_path,f) for f in  sorted(os.listdir(tweets_piped_path))]    
+    files = [os.path.join(tweets_path,f) for f in sorted(os.listdir(tweets_path)) if f[-4:] != '.txt' and f in sorted(os.listdir(tweets_piped_path))]
+    piped_files = [os.path.join(tweets_piped_path,f) for f in sorted(os.listdir(tweets_piped_path))]    
 
     def update_occs(occs, values, day_nb) :
         c = Counter()
